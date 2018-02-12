@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link href="/static/css/style.css" rel="stylesheet"/>
+    <title>exatool</title>
 </head>
 <body>
-test!!cool!!
+    <div id="params">
+        <form action= "/foo/execute/" method="POST">{% csrf_token %}
+            {{ paramForm.as_p }}
+            <input type="submit" value="Execute">
+        </form>
+    </div>
+    <textarea id="response" cols="150" rows="50">{{response}}</textarea>
 </body>
 </html>
