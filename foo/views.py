@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from forms import *
+from foo.forms import *
 import jinja2
 
 # Create your views here.
