@@ -34,7 +34,6 @@ def execute(request):
             result = stderr
         else:
             result = stdout
-        print(result)
         result = result.decode(encoding="utf-8")
         paramForm = ParamForm()
         return render(request, "execute.html", {'paramForm': paramForm, 'result':result})
