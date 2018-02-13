@@ -13,11 +13,12 @@
         </form>
     </div>
 
-    <div id="response">
+    <div id="configuration">
         <form action= "/foo/execute/" method="POST">{% csrf_token %}
-            <textarea name="conf" cols="150" rows="50">{{conf}}</textarea>
+            <textarea name="conf" cols="150" rows="30">{{conf}}</textarea>
             <input type="submit" value="Execute">
         </form>
     </div>
+    <textarea id="response" name="conf" cols="150" rows="50">{{result}}</textarea>
 </body>
 </html>

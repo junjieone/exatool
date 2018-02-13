@@ -2,7 +2,12 @@
     width:30%;
     float: left;
 }
-#response{
+#configuration{
     width:60%;
     float: right;
+}
+#response{
+    margin: 20px auto;
+    width: 90%;
+    display: inherit;
 }
