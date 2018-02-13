@@ -7,11 +7,17 @@
 </head>
 <body>
     <div id="params">
-        <form action= "/foo/execute/" method="POST">{% csrf_token %}
+        <form action= "/foo/generate/" method="POST">{% csrf_token %}
             {{ paramForm.as_p }}
+            <input type="submit" value="Generate">
+        </form>
+    </div>
+
+    <div id="response">
+        <form action= "/foo/execute/" method="POST">{% csrf_token %}
+            <textarea name="conf" cols="150" rows="50">{{conf}}</textarea>
             <input type="submit" value="Execute">
         </form>
     </div>
-    <textarea id="response" cols="150" rows="50">{{response}}</textarea>
 </body>
 </html>

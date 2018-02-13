@@ -8,22 +8,35 @@ from subprocess import Popen, PIPE
 import jinja2
 
 # Create your views here.
+def generate(request):
+    form = ParamForm(request.POST)
+    if form.is_valid():
+        template_path = './foo/files/template.j2'
+        conf = ""
+        with open(template_path, 'r') as f:
+            template = jinja2.Template(f.read())
+            conf = template.render(params=form.cleaned_data)
+            f.close()
+        paramForm = ParamForm()
+    return render(request, "execute.html", {'paramForm': paramForm, 'conf':conf})
 def execute(request):
     if request.method == "POST":
-        form = ParamForm(request.POST)
-        if form.is_valid():
-            template_path = './foo/files/template.j2'
-            conf_path = '../../lab/exabgp/vpn.conf'
-            conf = ""
-            with open(template_path, 'r') as f:
-                template = jinja2.Template(f.read())
-                conf = template.render(params=form.cleaned_data)
-                f.close()
-            with open(conf_path, 'w') as f:
-                f.write(conf)
-                f.close()
+        conf = request.POST['conf']
+        conf_path = '../../lab/exabgp/vpn.conf'
+        with open(conf_path, 'w') as f:
+            f.write(conf)
+            f.close()
+
+        command = "exabgp %s" % (conf_path)
+        process = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
+        stdout, stderr = process.communicate()
+        if stdout == "":
+            result = stderr
+        else:
+            result = stdout
+        print(result)
         paramForm = ParamForm()
-        return render(request, "execute.html", {'paramForm': paramForm, 'response':conf})
+        return render(request, "execute.html", {'paramForm': paramForm})
     else:
         paramForm = ParamForm()
         return render(request, "execute.html", {'paramForm':paramForm})
