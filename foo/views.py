@@ -34,7 +34,7 @@ def execute(request):
             result = stderr
         else:
             result = stdout
-            result = result.replace('\n', '<br>')
+            result = result.encode('utf-8').replace('\n', '<br>')
         paramForm = ParamForm()
         return render(request, "execute.html", {'paramForm': paramForm, 'result':result})
     else:
