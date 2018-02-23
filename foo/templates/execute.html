@@ -7,30 +7,34 @@
     <title>exatool</title>
 </head>
 <body>
-    <div id="params">
-        Parameters:
-        <form action= "/foo/generate/" method="POST">{% csrf_token %}
-            {{ paramForm.as_p }}
-            <input type="submit" value="Generate">
-        </form>
-    </div>
+    <div>
+        <div id="params">
+            Parameters:
+            <form action= "/foo/generate/" method="POST">{% csrf_token %}
+                {{ paramForm.as_p }}
+                <input type="submit" value="Generate">
+            </form>
+        </div>
 
-    <div id="configuration">
-        <form action= "/foo/execute/" method="POST">{% csrf_token %}
-            Configuration:
-            <textarea name="conf" cols="86" rows="50">{{conf}}</textarea>
-            <input type="submit" value="Execute">
-        </form>
-    </div>
-    <div id="response">
-        Output:
-        <textarea name="conf" cols="90" rows="50">{{result}}</textarea>
-    </div>
+        <div>
+            <div id="configuration">
+                <form action= "/foo/execute/" method="POST">{% csrf_token %}
+                    Configuration:
+                    <textarea name="conf" cols="110" rows="50">{{conf}}</textarea>
+                    <input type="submit" value="Execute">
+                </form>
+            </div>
+            <div id="response">
+                Output:
+                <textarea name="conf" cols="110" rows="50">{{result}}</textarea>
+            </div>
+        </div>
 
-    <div id="telnet">
-        <button onclick="show_route()">show route logical-system rr table inet.3 protocol bgp</button>
-        Output:
-        <textarea id="command_output" name="conf" cols="90" rows="50"></textarea>
+        <div id="telnet">
+            <button onclick="show_route()">show route logical-system rr table inet.3 protocol bgp</button>
+            Output:
+            <textarea id="command_output" name="conf" cols="90" rows="50"></textarea>
+        </div>
     </div>
 </body>
 <script>

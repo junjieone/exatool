@@ -1,14 +1,13 @@
 #params{
-    width:22%;
-    float: left;
+    margin: 10px auto;
+    width:90%;
 }
 #configuration{
-    width:38%;
+    width: 50%;
     float: left;
 }
 #response{
-    margin-left: 5px;
-    width: 39%;
+    width: 50%;
     float: left;
 }
 
