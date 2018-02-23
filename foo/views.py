@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from foo.forms import *
 from subprocess import Popen, PIPE
 import jinja2
-import paramiko
+import paramiko #apt-get install python-dev; install PyCrypto; then paramiko
 
 # Create your views here.
 def generate(request):
@@ -60,6 +60,7 @@ def command(request):
     execmd = "show route logical-system rr table inet.3 protocol bgp"
 
     response = sshclient_execmd(hostname, username, password, execmd)
+    response = response.decode(encoding="utf-8")
     return JsonResponse({'output': response})
 
 def sshclient_execmd(hostname, username, password, execmd):
