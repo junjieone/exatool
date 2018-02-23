@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from foo.forms import *
 from subprocess import Popen, PIPE
 import jinja2
+import paramiko
 
 # Create your views here.
 def generate(request):
@@ -13,12 +14,23 @@ def generate(request):
     if form.is_valid():
         template_path = './foo/files/template.j2'
         conf = ""
+
+        # check loop
+        prefix = form.cleaned_data['is_pref']
+        is_prefs = prefix.split(',')
+
         with open(template_path, 'r') as f:
             template = jinja2.Template(f.read())
-            conf = template.render(params=form.cleaned_data)
+            conf = template.render(params=form.cleaned_data, is_prefs = is_prefs)
             f.close()
+
+        final_conf = ""
+        for line in conf.splitlines():
+            if line.split():
+                final_conf += line + "\n"
+
         paramForm = ParamForm()
-    return render(request, "execute.html", {'paramForm': paramForm, 'conf':conf})
+    return render(request, "execute.html", {'paramForm': paramForm, 'conf':final_conf})
 def execute(request):
     if request.method == "POST":
         conf = request.POST['conf']
@@ -40,3 +52,24 @@ def execute(request):
     else:
         paramForm = ParamForm()
         return render(request, "execute.html", {'paramForm':paramForm})
+
+def command(request):
+    hostname = '172.27.10.79'
+    username = 'lab'
+    password = 'lab123'
+    execmd = "show route logical-system rr table inet.3 protocol bgp"
+
+    response = sshclient_execmd(hostname, username, password, execmd)
+    return JsonResponse({'output': response})
+
+def sshclient_execmd(hostname, username, password, execmd):
+    response = ""
+    #paramiko.util.log_to_file("paramiko.log")
+    s = paramiko.SSHClient()
+    s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    s.connect(hostname=hostname, username=username, password=password)
+    stdin, stdout, stderr = s.exec_command(execmd)
+    #stdin.write("Y")  # Generally speaking, the first connection, need a simple interaction.
+    response = stdout.read()
+    s.close()
+    return response
