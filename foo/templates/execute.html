@@ -30,22 +30,28 @@
             </div>
         </div>
 
-        <div id="telnet">
-            <button onclick="show_route('show route logical-system rr table inet.3 protocol bgp')">show route logical-system rr table inet.3 protocol bgp</button>
-            <button onclick="show_route('show route table inet.0 protocol bgp logical-system rr')">show route table inet.0 protocol bgp logical-system rr </button>
+        <div class="telnet">
+            <button onclick="show_route('show route logical-system rr table inet.3 protocol bgp',1)">show route logical-system rr table inet.3 protocol bgp</button>
             Output:
-            <textarea id="command_output" name="conf" cols="90" rows="50"></textarea>
+            <textarea id="command_output1" name="conf" rows="20"></textarea>
+        </div>
+        <div class="telnet">
+            <button onclick="show_route('show route table inet.0 protocol bgp logical-system rr',2)">show route table inet.0 protocol bgp logical-system rr </button>
+            Output:
+            <textarea id="command_output2" name="conf" rows="20"></textarea>
         </div>
     </div>
 </body>
 <script>
-function show_route(cmd){
+function show_route(cmd,msg){
     $.post(
         "/foo/command/",
         {cmd:cmd},
         function(res) {
-            console.log(res.output)
-            document.getElementById('command_output').value = res.output;
+            if(msg == 1)
+                document.getElementById('command_output1').value = res.output;
+            if(msg == 2)
+                document.getElementById('command_output2').value = res.output;
         },
     );
 }
