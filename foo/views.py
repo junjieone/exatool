@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from foo.forms import *
 from subprocess import Popen, PIPE
+import os,sys
 import jinja2
 import paramiko #apt-get install python-dev; install PyCrypto; then paramiko
 
@@ -14,6 +15,7 @@ def generate(request):
     form = ParamForm(request.POST)
     if form.is_valid():
         template_path = './foo/files/template.j2'
+        print(sys.path)
         conf = ""
 
         # check loop
@@ -36,6 +38,7 @@ def execute(request):
     if request.method == "POST":
         conf = request.POST['conf']
         conf_path = '../../lab/exabgp/vpn.conf'
+        conf_path = conf_path.decode(encoding="utf-8")
         with open(conf_path, 'w') as f:
             f.write(conf)
             f.close()
