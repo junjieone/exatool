@@ -31,16 +31,18 @@
         </div>
 
         <div id="telnet">
-            <button onclick="show_route()">show route logical-system rr table inet.3 protocol bgp</button>
+            <button onclick="show_route('show route logical-system rr table inet.3 protocol bgp')">show route logical-system rr table inet.3 protocol bgp</button>
+            <button onclick="show_route('show route table inet.0 protocol bgp logical-system rr')">show route table inet.0 protocol bgp logical-system rr </button>
             Output:
             <textarea id="command_output" name="conf" cols="90" rows="50"></textarea>
         </div>
     </div>
 </body>
 <script>
-function show_route(){
-    $.get(
+function show_route(cmd){
+    $.post(
         "/foo/command/",
+        {cmd:cmd},
         function(res) {
             console.log(res.output)
             document.getElementById('command_output').value = res.output;

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from foo.forms import *
 from subprocess import Popen, PIPE
 import jinja2
@@ -53,11 +54,12 @@ def execute(request):
         paramForm = ParamForm()
         return render(request, "execute.html", {'paramForm':paramForm})
 
+@csrf_exempt
 def command(request):
     hostname = '172.27.10.79'
     username = 'lab'
     password = 'lab123'
-    execmd = "show route logical-system rr table inet.3 protocol bgp"
+    execmd = request.POST['cmd']
 
     response = sshclient_execmd(hostname, username, password, execmd)
     response = response.decode(encoding="utf-8")
