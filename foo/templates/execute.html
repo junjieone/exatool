@@ -1,59 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="/static/css/style.css" rel="stylesheet"/>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-    <title>exatool</title>
-</head>
-<body>
-    <div>
-        <div id="params">
-            Parameters:
-            <form action= "/foo/generate/" method="POST">{% csrf_token %}
-                {{ paramForm.as_p }}
-                <input type="submit" value="Generate">
-            </form>
+{% extends "frame.html" %}
+{% block body %}
+<div class="top">
+    <div class="params_addr">
+        Parameters:
+        <form id="generate_form" action= "/foo/generate/" method="POST">{% csrf_token %}
+            {{ paramForm.as_p }}
+            <input type="submit" value="Generate">
+        </form>
+    </div>
+    <div class="conf">
+        Configuration:
+        <textarea id="conf_textarea" class="general_textarea" readonly></textarea>
+        <button onclick="create_conf()">Create vpn.conf</button>
+    </div>
+    <div class="result">
+        Result:
+        <textarea id="result_textarea" class="general_textarea" readonly></textarea>
+    </div>
+</div>
+<div class="mid" style="display:inline-block;">
+    Executions:
+    <div class="start">
+        <label>Start: </label><button onclick="command('start','','')">exabgp vpn.conf</button>
+    </div>
+    <div class="modify">
+        <label>Modify: </label>
+        <div class="ipv4_block">
+            <label class="block_title">Normal IPv4 Prefix: </label>
+            <div class="params_modify">
+                <div><label>neighbor address:</label><input id="nm_nb_addr" type="text" class="bar"></div>
+                <div><label>prefix:</label><input id="nm_pref" type="text" class="bar" ></div>
+                <div><label>next-hop:</label><input id="nm_nh" type="text" class="bar"></div>
+                <button onclick="command('modify', 'normal', 'announce')">Announce</button>
+                <button onclick="command('modify', 'normal', 'withdraw')">Withdraw</button>
+            </div>
         </div>
 
-        <div>
-            <div id="configuration">
-                <form action= "/foo/execute/" method="POST">{% csrf_token %}
-                    Configuration:
-                    <textarea name="conf" cols="110" rows="50">{{conf}}</textarea>
-                    <input type="submit" value="Execute">
-                </form>
+        <div class="ipv4_block">
+            <label>IPv4 Prefix with Label: </label>
+            <div class="params_modify">
+                <div><label>neighbor address:</label><input id="lb_nb_addr" type="text" class="bar"></div>
+                <div><label>prefix:</label><input id="lb_pref" type="text" class="bar"></div>
+                <div><label>next-hop:</label><input id="lb_nh" type="text" class="bar"></div>
+                <div><label>label:</label><input id="lb_lb" type="text" class="bar"></div>
+                <button onclick="command('modify', 'label', 'announce')">Announce</button>
+                <button onclick="command('modify', 'label', 'withdraw')">Withdraw</button>
             </div>
-            <div id="response">
-                Output:
-                <textarea name="conf" cols="110" rows="50">{{result}}</textarea>
-            </div>
-        </div>
 
-        <div class="telnet">
-            <button onclick="show_route('show route logical-system rr table inet.3 protocol bgp',1)">show route logical-system rr table inet.3 protocol bgp</button>
-            Output:
-            <textarea id="command_output1" name="conf" rows="20"></textarea>
         </div>
-        <div class="telnet">
-            <button onclick="show_route('show route table inet.0 protocol bgp logical-system rr',2)">show route table inet.0 protocol bgp logical-system rr </button>
-            Output:
-            <textarea id="command_output2" name="conf" rows="20"></textarea>
+        <div class="ipv4_block">
+            <label>FlowSpec IPv4 Prefix: </label>
+            <div class="params_modify">
+                <div><label>neighbor address:</label><input id="fs_nb_addr" type="text" class="bar"></div>
+                <div><label>source prefix:</label><input id="fs_sr_pref" type="text" class="bar"></div>
+                <div><label>destination prefix:</label><input id="fs_dt_nh" type="text" class="bar"></div>
+                <div><label>action:</label><input id="fs_act" type="text" class="bar"></div>
+                <button onclick="command('modify', 'flowspec', 'announce')">Announce</button>
+                <button onclick="command('modify', 'flowspec', 'withdraw')">Withdraw</button>
+            </div>
         </div>
     </div>
-</body>
+    <div class="terminate">
+        <label>Terminate: </label><button onclick="command('terminate','','')">Terminate exabgp</button>
+    </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
 <script>
-function show_route(cmd,msg){
-    $.post(
-        "/foo/command/",
-        {cmd:cmd},
-        function(res) {
-            if(msg == 1)
-                document.getElementById('command_output1').value = res.output;
-            if(msg == 2)
-                document.getElementById('command_output2').value = res.output;
-        },
-    );
-}
+$(document).ready(function() {
+    $("#generate_form").ajaxForm(function(res){
+        var conf_textarea = document.getElementById("conf_textarea");
+        conf_textarea.innerHTML = res.conf;
+    });
+});
 </script>
-</html>
+{% endblock %}

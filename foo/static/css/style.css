@@ -1,7 +1,74 @@
-#params{
+.top{
     margin: 10px auto;
     width:90%;
 }
+.mid{
+    margin: 10px auto;
+    width:90%;
+}
+.params_collect{
+    width: max-content;
+    margin: 0 auto;
+}
+.outputBlock{
+    width: 32%;
+    margin: 5px 5px 5px 5px;
+    float: left;
+}
+.output_textarea{
+    width: 100%;
+    height: 150px;
+    resize: vertical;
+}
+.params_addr{
+    width: 25%;
+    float: left;
+}
+.conf{
+    width: 20%;
+    float: left;
+}
+.general_textarea{
+    width: 100%;
+    height: 300px;
+    resize: vertical;
+}
+.result{
+    margin-left: 20px;
+    width: 52%;
+    float: left;
+}
+.start{
+    margin: 10px 50px;
+}
+.modify{
+    margin: 10px 50px;
+}
+.terminate{
+    margin: 10px 50px;
+}
+.ipv4_block{
+    width:100%;
+    margin: 10px 50px;
+    border: 1px solid blue;
+    padding: 5px 5px;
+}
+.block_title{
+    float:left;
+}
+.bar{
+    width: 150px;
+    margin-left:10px;
+}
+.params_modify{
+    width:25%;
+    margin: 20px auto;
+}
+
+
+
+
+
 #configuration{
     width: 50%;
     float: left;

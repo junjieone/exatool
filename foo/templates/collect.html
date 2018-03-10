@@ -1,0 +1,52 @@
+{% extends "frame.html" %}
+{% block body %}
+<div class="top">
+    <div class="params_collect">
+        <form id="collect_form" action= "{% url 'collect' %}" method="POST">{% csrf_token %}
+            {{ collectForm.as_p }}
+            <input type="submit" value="Run">
+        </form>
+    </div>
+</div>
+Outputs:
+<div class="mid"></div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $("#collect_form").ajaxForm(function(res){
+        var midDiv = document.getElementsByClassName("mid")[0]; //Get mid div
+
+        //Create output block
+        var output = document.createElement('div');
+        output.className = 'outputBlock';
+
+        //Create hostname label
+        var hostLabel = document.createElement('label');
+        hostLabel.innerHTML = res.hostname;
+
+        //Create output textarea
+        var textarea = document.createElement('textarea');
+        textarea.id = 'output_textarea';
+        textarea.className = 'general_textarea';
+        textarea.setAttribute('readonly','readonly');
+        textarea.value = res.response;
+
+        //Create remove button
+        var removeButton = document.createElement('button');
+        removeButton.innerHTML = 'Remove'
+        removeButton.onclick = function () {
+            midDiv.removeChild(removeButton.parentNode);
+        };
+
+        //Combine
+        output.appendChild(hostLabel);
+        output.appendChild(textarea);
+        output.appendChild(removeButton);
+        midDiv.appendChild(output);
+
+    });
+});
+</script>
+{% endblock %}

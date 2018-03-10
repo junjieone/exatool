@@ -1,57 +1,42 @@
-neighbor {{params.is_nb_addr}} {          //Please input IS neighbor address:
-      router-id 172.27.10.120;
-      local-address 172.27.10.120;
-      local-as 1;
-      peer-as 1;
-      hold-time 60;
-      family {
-             ipv4 unicast;
-             ipv4 nlri-mpls;
-             ipv4 flow;
-      }
-
-
-      static {
-             {% for is_pref in is_prefs %}
-             route {{is_pref}} next-hop {{params.is_es_nx_hop}} label [ {{params.is_vnh_label}} ];   //Please input IS Prefix and ES next-hop and VNH label:
-             {% endfor %}
-      }
+{% if params.is_nb_addr %}
+neighbor {{params.is_nb_addr}} {
+    router-id 172.27.10.120;
+    local-address 172.27.10.120;
+    local-as 1;
+    peer-as 1;
+    hold-time 60;
+    family {
+         ipv4 unicast;
+         ipv4 nlri-mpls;
+         ipv4 flow;
+    }
 }
-neighbor {{params.dr_nb_addr}} {             //Please input DR neighbor address
-      router-id 172.27.10.120;
-      local-address 172.27.10.120;
-      local-as 1;
-      peer-as 1;
-      hold-time 60;
-      family {
-             ipv4 unicast;
-             ipv4 nlri-mpls;
-             ipv4 flow;
-      }
-
-      capability {
-                 add-path send/receive;
-      }
-
-      add-path {
-               ipv4 unicast;
-               ipv4 nlri-mpls;
-       }
-
-       static {
-              route {{params.dr_pref}} next-hop {{params.dr_es_nx_hop}} label [ {{params.dr_vnh_label}} ];  //Please input DR Prefix and ES next-hop and VNH label:
-              route 10.30.1.0/24 next-hop 100.100.100.100;
-              route 10.30.111.1/32 next-hop 33.33.33.2;
-       }
-       flow {
-            route test {
-                      match {
-                             source {{params.dr_sr_addr}};       //Please input DR source address and destination address
-                             destination {{params.dr_dt_addr}};
-                       }
-                       then {
-                            redirect 1:1;
-                       }
-             }
-        }
+{% endif %}
+{% if params.dr_nb_addr %}
+neighbor {{params.dr_nb_addr}} {
+    router-id 172.27.10.120;
+    local-address 172.27.10.120;
+    local-as 1;
+    peer-as 1;
+    hold-time 60;
+    family {
+         ipv4 unicast;
+         ipv4 nlri-mpls;
+         ipv4 flow;
+    }
 }
+{% endif %}
+{% if params.es_nb_addr %}
+neighbor {{params.es_nb_addr}} {
+    router-id 172.27.10.120;
+    local-address 172.27.10.120;
+    local-as 1;
+    peer-as 1;
+    hold-time 60;
+    family {
+         ipv4 unicast;
+         ipv4 nlri-mpls;
+         ipv4 flow;
+    }
+}
+{% endif %}
