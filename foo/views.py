@@ -46,7 +46,7 @@ def generate(request):
 def create(request):
     global conf_path
     vpn_conf = request.POST['vpn_conf']
-    conf_path = conf_path.decode(encoding="utf-8")
+    #conf_path = conf_path.decode(encoding="utf-8")
     with open(conf_path, 'w') as f:
         f.write(vpn_conf)
         f.close()
@@ -81,7 +81,6 @@ def command(request, action, category="", operation=""):
     global conf_path
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
-
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
             params = {}
@@ -120,7 +119,7 @@ def command(request, action, category="", operation=""):
         '''
     if action == 'terminate':
         cmd_getTID = "pgrep exabgp"
-        tid = local_execmd(cmd_getTID)
+        tid = local_execmd(cmd_getTID).decode(encoding="utf-8")
         cmd = "kill " + tid
 
     #Execute the command
