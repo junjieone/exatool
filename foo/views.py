@@ -82,12 +82,12 @@ def command(request, action, category="", operation=""):
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
         process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-        stdout, stderr = process.communicate()
-        if stdout.decode(encoding="utf-8") == "":
-            result = stderr
-        else:
-            result = stdout
-        print(result)
+        result = ""
+        for i in iter(process.stdout.readline, 'b'):
+            result = result + i.decode(encoding="utf-8")
+            if i == b'':
+                break
+        return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
             params = {}
@@ -131,8 +131,8 @@ def command(request, action, category="", operation=""):
 
         #Execute the command
         result = local_execmd(cmd)
-    result = result.decode(encoding="utf-8")
-    return JsonResponse({'result': result, 'action':action})
+        result = result.decode(encoding="utf-8")
+        return JsonResponse({'result': result, 'action':action})
 
 def collect(request):
     if request.method == "POST":
@@ -151,17 +151,12 @@ def collect(request):
         return render(request, "collect.html", {'collectForm': collectForm})
 
 def local_execmd(cmd):
-    result = ""
     process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-    for i in iter(process.stdout, 'b'):
-        result = result + i.decode(encoding="utf-8")
-    '''
     stdout, stderr = process.communicate()
     if stdout.decode(encoding="utf-8") == "":
         result = stderr
     else:
         result = stdout
-    '''
     return result
 
 def sshclient_execmd(hostname, username, password, execmd):
