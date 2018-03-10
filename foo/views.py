@@ -83,9 +83,11 @@ def command(request, action, category="", operation=""):
         cmd = "exabgp %s" % (conf_path)
         process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         result = ""
+        count = 0 #Temporarily solve the unstop 'exabgp' running
         for i in iter(process.stdout.readline, 'b'):
             result = result + i.decode(encoding="utf-8")
-            if i == b'':
+            count = count + 1
+            if count == 100:
                 break
         return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
