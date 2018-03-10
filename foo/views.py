@@ -81,6 +81,13 @@ def command(request, action, category="", operation=""):
     global conf_path
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
+        process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+        stdout, stderr = process.communicate()
+        if stdout.decode(encoding="utf-8") == "":
+            result = stderr
+        else:
+            result = stdout
+        print(result)
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
             params = {}
@@ -122,8 +129,8 @@ def command(request, action, category="", operation=""):
         tid = local_execmd(cmd_getTID).decode(encoding="utf-8")
         cmd = "kill " + tid
 
-    #Execute the command
-    result = local_execmd(cmd)
+        #Execute the command
+        result = local_execmd(cmd)
     result = result.decode(encoding="utf-8")
     return JsonResponse({'result': result, 'action':action})
 
