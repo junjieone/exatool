@@ -124,7 +124,7 @@ def command(request, action, category="", operation=""):
 
     #Execute the command
     result = local_execmd(cmd)
-    result = result.decode(encoding="utf-8")
+    #result = result.decode(encoding="utf-8")
     return JsonResponse({'result': result, 'action':action})
 
 def collect(request):
