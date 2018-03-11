@@ -82,12 +82,12 @@ def command(request, action, category="", operation=""):
     global conf_path
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
-        process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+        #process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
         result = ""
         # Temporarily solve the unstop 'exabgp' running
         # When it keeps running then output the first 22 lines.
         # If there is error, then use communicate() to get stderr
-
+        '''
         count = 0
         for i in iter(process.stdout.readline, 'b'):
             print i
@@ -95,6 +95,8 @@ def command(request, action, category="", operation=""):
             count = count + 1
             if count == 22 or process.poll() != None:
                 break
+        '''
+        result = local_execmd(cmd)
         return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
@@ -163,7 +165,14 @@ def local_execmd(cmd):
     #output = process.communicate()
     result = ""
     #If terminated, output. else provide pid
+    while True:
+        line = process.stdout.readline()
+        result = result + line.decode(encoding="utf-8")
+        if Popen.poll(process) == 0:  # 判断子进程是否结束
+            break
+    '''
     time.sleep(1)
+    print(process.stdout.readline())
     if process.poll() != None:
         for i in iter(process.stdout.readline, 'b'):
             if i.decode(encoding="utf-8") == '':
@@ -171,6 +180,7 @@ def local_execmd(cmd):
             result = result + i.decode(encoding="utf-8")
     else:
         result = "PID: " + str(process.pid)
+    '''
     return result
 
 def sshclient_execmd(hostname, username, password, execmd):
