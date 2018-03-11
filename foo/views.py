@@ -5,8 +5,9 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from foo.forms import *
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, call, STDOUT
 import os,sys
+import commands
 import jinja2
 import paramiko #apt-get install python-dev; install PyCrypto; then paramiko
 
@@ -81,14 +82,24 @@ def command(request, action, category="", operation=""):
     global conf_path
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
-        process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+        #process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         result = ""
-        count = 0 #Temporarily solve the unstop 'exabgp' running
+        # Temporarily solve the unstop 'exabgp' running
+        # When it keeps running then output the first 22 lines.
+        # If there is error, then use communicate() to get stderr
+        '''
+        count = 0
         for i in iter(process.stdout.readline, 'b'):
             result = result + i.decode(encoding="utf-8")
             count = count + 1
             if count == 22:
                 break
+        if result.decode(encoding="utf-8") == '':
+            result = local_execmd(cmd)
+        '''
+        #result = commands.getoutput(cmd)
+        result = local_execmd(cmd)
+        result = result.decode(encoding="utf-8")
         return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
@@ -100,6 +111,12 @@ def command(request, action, category="", operation=""):
                 params[k] = request.POST[k]
             cmd = template.render(params).strip() #Get the command and eliminate blank lines
             f.close()
+
+        #result = local_execmd(cmd)
+        result = call(cmd, shell=True)
+        result = result.decode(encoding="utf-8")
+        return JsonResponse({'result': result, 'action': action})
+
         '''
         if category == 'normal':
             nm_nb_addr = request.POST['nm_nb_addr']
@@ -131,10 +148,10 @@ def command(request, action, category="", operation=""):
         tid = local_execmd(cmd_getTID).decode(encoding="utf-8")
         cmd = "kill " + tid
 
-    #Execute the command
-    result = local_execmd(cmd)
-    result = result.decode(encoding="utf-8")
-    return JsonResponse({'result': result, 'action':action})
+        #Execute the command
+        result = local_execmd(cmd)
+        result = result.decode(encoding="utf-8")
+        return JsonResponse({'result': result, 'action':action})
 
 def collect(request):
     if request.method == "POST":
@@ -153,13 +170,10 @@ def collect(request):
         return render(request, "collect.html", {'collectForm': collectForm})
 
 def local_execmd(cmd):
-    process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
-    if stdout.decode(encoding="utf-8") == "":
-        result = stderr
-    else:
-        result = stdout
-    return result
+    process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
+    #output = process.communicate()
+    sys.stdout.flush()
+    return process.stdout.readline()
 
 def sshclient_execmd(hostname, username, password, execmd):
     #paramiko.util.log_to_file("paramiko.log")
