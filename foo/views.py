@@ -111,8 +111,7 @@ def command(request, action, category="", operation=""):
             cmd = template.render(params).strip() #Get the command and eliminate blank lines
             f.close()
 
-        #result = local_execmd(cmd)
-        result = call(cmd, shell=True)
+        result = local_execmd(cmd)
         result = result.decode(encoding="utf-8")
         return JsonResponse({'result': result, 'action': action})
 
@@ -171,8 +170,14 @@ def collect(request):
 def local_execmd(cmd):
     process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
     #output = process.communicate()
-    sys.stdout.flush()
-    return process.stdout.readline()
+    count = 0
+    result = ""
+    for i in iter(process.stdout.readline, 'b'):
+        result = result + i.decode(encoding="utf-8")
+        print(i)
+        if i.decode(encoding="utf-8") == "":
+            break
+    return result
 
 def sshclient_execmd(hostname, username, password, execmd):
     #paramiko.util.log_to_file("paramiko.log")
