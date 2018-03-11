@@ -174,13 +174,10 @@ def local_execmd(cmd):
     '''
     time.sleep(1)
     if process.poll() != None:
-        result = process.stdout.readlines().decode(encoding="utf-8")
-        '''
         for i in iter(process.stdout.readline, 'b'):
             if i.decode(encoding="utf-8") == '':
                 break
             result = result + i.decode(encoding="utf-8")
-        '''
     else:
         result = "PID: " + str(process.pid)
 
