@@ -87,7 +87,7 @@ def command(request, action, category="", operation=""):
         for i in iter(process.stdout.readline, 'b'):
             result = result + i.decode(encoding="utf-8")
             count = count + 1
-            if count == 100:
+            if count == 22:
                 break
         return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
@@ -131,10 +131,10 @@ def command(request, action, category="", operation=""):
         tid = local_execmd(cmd_getTID).decode(encoding="utf-8")
         cmd = "kill " + tid
 
-        #Execute the command
-        result = local_execmd(cmd)
-        result = result.decode(encoding="utf-8")
-        return JsonResponse({'result': result, 'action':action})
+    #Execute the command
+    result = local_execmd(cmd)
+    result = result.decode(encoding="utf-8")
+    return JsonResponse({'result': result, 'action':action})
 
 def collect(request):
     if request.method == "POST":
