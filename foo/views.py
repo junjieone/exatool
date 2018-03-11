@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from foo.forms import *
 from subprocess import Popen, PIPE, call, STDOUT
 import os,sys
-import commands
 import jinja2
 import paramiko #apt-get install python-dev; install PyCrypto; then paramiko
 
