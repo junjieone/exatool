@@ -8,6 +8,7 @@ from foo.forms import *
 from subprocess import Popen, PIPE, call, STDOUT
 import os,sys
 import jinja2
+import time
 import paramiko #apt-get install python-dev; install PyCrypto; then paramiko
 
 
@@ -81,7 +82,7 @@ def command(request, action, category="", operation=""):
     global conf_path
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
-        process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+        process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
         result = ""
         # Temporarily solve the unstop 'exabgp' running
         # When it keeps running then output the first 22 lines.
@@ -89,9 +90,10 @@ def command(request, action, category="", operation=""):
 
         count = 0
         for i in iter(process.stdout.readline, 'b'):
+            print i
             result = result + i.decode(encoding="utf-8")
             count = count + 1
-            if count == 22:
+            if count == 22 or process.poll() != None:
                 break
         return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
@@ -133,12 +135,11 @@ def command(request, action, category="", operation=""):
         '''
     if action == 'terminate':
         cmd_getTID = "pgrep exabgp"
-        tid = local_execmd(cmd_getTID).decode(encoding="utf-8")
+        tid = local_execmd(cmd_getTID)
         cmd = "kill " + tid
 
     #Execute the command
     result = local_execmd(cmd)
-    #result = result.decode(encoding="utf-8")
     return JsonResponse({'result': result, 'action':action})
 
 def collect(request):
@@ -161,10 +162,15 @@ def local_execmd(cmd):
     process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
     #output = process.communicate()
     result = ""
-    for i in iter(process.stdout.readline, 'b'):
-        if i.decode(encoding="utf-8") == '':
-            break
-        result = result + i.decode(encoding="utf-8")
+    #If terminated, output. else provide pid
+    time.sleep(1)
+    if process.poll() != None:
+        for i in iter(process.stdout.readline, 'b'):
+            if i.decode(encoding="utf-8") == '':
+                break
+            result = result + i.decode(encoding="utf-8")
+    else:
+        result = "PID: " + str(process.pid)
     return result
 
 def sshclient_execmd(hostname, username, password, execmd):
