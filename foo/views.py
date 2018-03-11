@@ -81,24 +81,18 @@ def command(request, action, category="", operation=""):
     global conf_path
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
-        #process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+        process = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
         result = ""
         # Temporarily solve the unstop 'exabgp' running
         # When it keeps running then output the first 22 lines.
         # If there is error, then use communicate() to get stderr
-        '''
+
         count = 0
         for i in iter(process.stdout.readline, 'b'):
             result = result + i.decode(encoding="utf-8")
             count = count + 1
             if count == 22:
                 break
-        if result.decode(encoding="utf-8") == '':
-            result = local_execmd(cmd)
-        '''
-        #result = commands.getoutput(cmd)
-        result = local_execmd(cmd)
-        result = result.decode(encoding="utf-8")
         return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
@@ -110,10 +104,6 @@ def command(request, action, category="", operation=""):
                 params[k] = request.POST[k]
             cmd = template.render(params).strip() #Get the command and eliminate blank lines
             f.close()
-
-        result = local_execmd(cmd)
-        result = result.decode(encoding="utf-8")
-        return JsonResponse({'result': result, 'action': action})
 
         '''
         if category == 'normal':
@@ -146,10 +136,10 @@ def command(request, action, category="", operation=""):
         tid = local_execmd(cmd_getTID).decode(encoding="utf-8")
         cmd = "kill " + tid
 
-        #Execute the command
-        result = local_execmd(cmd)
-        result = result.decode(encoding="utf-8")
-        return JsonResponse({'result': result, 'action':action})
+    #Execute the command
+    result = local_execmd(cmd)
+    #result = result.decode(encoding="utf-8")
+    return JsonResponse({'result': result, 'action':action})
 
 def collect(request):
     if request.method == "POST":
@@ -170,13 +160,11 @@ def collect(request):
 def local_execmd(cmd):
     process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
     #output = process.communicate()
-    count = 0
     result = ""
     for i in iter(process.stdout.readline, 'b'):
-        result = result + i.decode(encoding="utf-8")
-        print(i)
-        if i.decode(encoding="utf-8") == "":
+        if i.decode(encoding="utf-8") == '':
             break
+        result = result + i.decode(encoding="utf-8")
     return result
 
 def sshclient_execmd(hostname, username, password, execmd):
