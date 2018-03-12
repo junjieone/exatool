@@ -137,8 +137,8 @@ def command(request, action, category="", operation=""):
         '''
     if action == 'terminate':
         cmd_getTID = "pgrep exabgp"
-        tid = local_execmd(cmd_getTID)
-        cmd = "kill " + tid
+        stdout, pid = local_execmd(cmd_getTID)
+        cmd = "kill " + stdout
         local_execmd(cmd)
 
     return JsonResponse({'result': result, 'action':action, 'cmd':cmd, 'pid':pid})
