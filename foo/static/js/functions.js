@@ -67,3 +67,7 @@ function command(action, category, operation){
         },
     );
 }
+function clean(){
+    var result_textarea = document.getElementById("result_textarea");
+    result_textarea.innerHTML = "";
+}
