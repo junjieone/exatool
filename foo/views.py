@@ -85,6 +85,7 @@ def command(request, action, category="", operation=""):
     pid = ""
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
+        '''
         process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
         # Temporarily solve the unstop 'exabgp' running
         # When it keeps running then output the first 22 lines.
@@ -95,7 +96,8 @@ def command(request, action, category="", operation=""):
             count = count + 1
             if count == 22 or process.poll() != None:
                 break
-
+        '''
+        result, pid = local_execmd(cmd)
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
             params = {}
