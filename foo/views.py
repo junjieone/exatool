@@ -51,7 +51,8 @@ def create(request):
     with open(conf_path, 'w') as f:
         f.write(vpn_conf)
         f.close()
-    return JsonResponse({})
+    msg = "Successfully create vpn.conf"
+    return JsonResponse({'msg':msg})
 
 def execute(request):
     '''
@@ -81,6 +82,7 @@ def execute(request):
 def command(request, action, category="", operation=""):
     global conf_path
     result = ""
+    pid = ""
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
         process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
@@ -104,9 +106,8 @@ def command(request, action, category="", operation=""):
                 params[k] = request.POST[k]
             cmd = template.render(params).strip() #Get the command and eliminate blank lines
             f.close()
-
         # Execute the command
-        result = local_execmd(cmd)
+        result,pid = local_execmd(cmd)
 
         '''
         if category == 'normal':
@@ -140,7 +141,7 @@ def command(request, action, category="", operation=""):
         cmd = "kill " + tid
         local_execmd(cmd)
 
-    return JsonResponse({'result': result, 'action':action, 'cmd':cmd})
+    return JsonResponse({'result': result, 'action':action, 'cmd':cmd, 'pid':pid})
 
 def collect(request):
     if request.method == "POST":
@@ -160,8 +161,8 @@ def collect(request):
 
 def local_execmd(cmd):
     process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
-    output = process.communicate()[0]
-    print(output)
+    stdout = process.communicate()[0]
+    pid = str(process.pid)
     #result = ""
     #If terminated, output. else provide pid
     '''
@@ -181,8 +182,7 @@ def local_execmd(cmd):
     else:
         result = "PID: " + str(process.pid)
     '''
-    result = str(process.pid)
-    return result
+    return stdout, pid
 
 def sshclient_execmd(hostname, username, password, execmd):
     #paramiko.util.log_to_file("paramiko.log")
