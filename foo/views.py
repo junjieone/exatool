@@ -182,7 +182,7 @@ def local_execmd(cmd):
     else:
         result = "PID: " + str(process.pid)
     '''
-    return stdout, pid
+    return stdout.decode(encoding="utf-8"), pid
 
 def sshclient_execmd(hostname, username, password, execmd):
     #paramiko.util.log_to_file("paramiko.log")
