@@ -53,6 +53,7 @@ function command(action, category, operation){
             var result_textarea = document.getElementById("result_textarea");
             if(res.action == 'start'){
                 result_textarea.innerHTML += "--------------------Start--------------------\n";
+
             }
             if(res.action == 'modify'){
                 result_textarea.innerHTML += "--------------------Modify--------------------\n";
@@ -60,6 +61,7 @@ function command(action, category, operation){
             if(res.action == 'terminate'){
                 result_textarea.innerHTML += "--------------------Terminate--------------------\n";
             }
+            result_textarea.innerHTML += "Command: " + res.cmd + "\n\n";
             result_textarea.innerHTML += res.result + '\n';
         },
     );

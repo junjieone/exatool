@@ -80,24 +80,20 @@ def execute(request):
 @csrf_exempt
 def command(request, action, category="", operation=""):
     global conf_path
+    result = ""
     if action == 'start':
         cmd = "exabgp %s" % (conf_path)
         process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
-        result = ""
         # Temporarily solve the unstop 'exabgp' running
         # When it keeps running then output the first 22 lines.
         # If there is error, then use communicate() to get stderr
-
         count = 0
         for i in iter(process.stdout.readline, 'b'):
-            print i
             result = result + i.decode(encoding="utf-8")
             count = count + 1
             if count == 22 or process.poll() != None:
                 break
 
-        #result = local_execmd(cmd)
-        return JsonResponse({'result': result, 'action': action})
     if action == 'modify':
         with open(cmd_j2, 'r') as f:
             params = {}
@@ -108,6 +104,9 @@ def command(request, action, category="", operation=""):
                 params[k] = request.POST[k]
             cmd = template.render(params).strip() #Get the command and eliminate blank lines
             f.close()
+
+        # Execute the command
+        result = local_execmd(cmd)
 
         '''
         if category == 'normal':
@@ -139,10 +138,9 @@ def command(request, action, category="", operation=""):
         cmd_getTID = "pgrep exabgp"
         tid = local_execmd(cmd_getTID)
         cmd = "kill " + tid
+        local_execmd(cmd)
 
-    #Execute the command
-    result = local_execmd(cmd)
-    return JsonResponse({'result': result, 'action':action})
+    return JsonResponse({'result': result, 'action':action, 'cmd':cmd})
 
 def collect(request):
     if request.method == "POST":
@@ -162,8 +160,9 @@ def collect(request):
 
 def local_execmd(cmd):
     process = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
-    #output = process.communicate()
-    result = ""
+    output = process.communicate()[0]
+    print(output)
+    #result = ""
     #If terminated, output. else provide pid
     '''
     while True:
@@ -171,6 +170,7 @@ def local_execmd(cmd):
         result = result + line.decode(encoding="utf-8")
         if Popen.poll(process) == 0:  # 判断子进程是否结束
             break
+    '''
     '''
     time.sleep(1)
     if process.poll() != None:
@@ -180,7 +180,8 @@ def local_execmd(cmd):
             result = result + i.decode(encoding="utf-8")
     else:
         result = "PID: " + str(process.pid)
-
+    '''
+    result = str(process.pid)
     return result
 
 def sshclient_execmd(hostname, username, password, execmd):

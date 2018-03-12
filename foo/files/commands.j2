@@ -1,26 +1,26 @@
 {% if category == 'normal' %}
     {% if operation == 'announce' %}
-sudo curl --form "command=neighbor {{nm_nb_addr}} announce route {{nm_pref}} next-hop {{nm_nh}}" http://localhost:5001/announce route {{nm_pref}} next-hop {{nm_nh}} &
+sudo curl --form "command=neighbor {{nm_nb_addr}} announce route {{nm_pref}} next-hop {{nm_nh}}" http://localhost:5001/ &
     {% endif %}
     {% if operation == 'withdraw' %}
-sudo curl --form "command=neighbor {{nm_nb_addr}} withdraw route {{nm_pref}} next-hop {{nm_nh}}" http://localhost:5001/withdraw route {{nm_pref}} next-hop {{nm_nh}} &
+sudo curl --form "command=neighbor {{nm_nb_addr}} withdraw route {{nm_pref}} next-hop {{nm_nh}}" http://localhost:5001/ &
     {% endif %}
 {% endif %}
 
 {% if category == 'label' %}
     {% if operation == 'announce' %}
-sudo curl --form "command=neighbor {{lb_nb_addr}} announce route {{lb_pref}} next-hop {{lb_nh}} label {{lb_lb}}" http://localhost:5001/neighbor {{lb_nb_addr}} announce route {{lb_pref}} next-hop 100.100.100.4 label {{lb_lb}} &
+sudo curl --form "command=neighbor {{lb_nb_addr}} announce route {{lb_pref}} next-hop {{lb_nh}} label {{lb_lb}}" http://localhost:5001/ &
     {% endif %}
     {% if operation == 'withdraw' %}
-sudo curl --form "command=neighbor {{lb_nb_addr}} withdraw route {{lb_pref}} next-hop {{lb_nh}} label {{lb_lb}}" http://localhost:5001/neighbor {{lb_nb_addr}} withdraw route {{lb_pref}} next-hop 100.100.100.4 label {{lb_lb}} &
+sudo curl --form "command=neighbor {{lb_nb_addr}} withdraw route {{lb_pref}} next-hop {{lb_nh}} label {{lb_lb}}" http://localhost:5001/ &
     {% endif %}
 {% endif %}
 
 {% if category == 'flowspec' %}
     {% if operation == 'announce' %}
-sudo curl --form "command=neighbor {{fs_nb_addr}} announce flow route source {{fs_sr_pref}} destination {{fs_dt_nh}} {{fs_act}}" http://localhost:5001/neighbor {{fs_nb_addr}} announce flow route source {{fs_sr_pref}} destination {{fs_dt_nh}} {{fs_act}} &
+sudo curl --form "command=neighbor {{fs_nb_addr}} announce flow route source {{fs_sr_pref}} destination {{fs_dt_nh}} {{fs_act}}" http://localhost:5001/ &
     {% endif %}
     {% if operation == 'withdraw' %}
-sudo curl --form "command=neighbor {{fs_nb_addr}} withdraw flow route source {{fs_sr_pref}} destination {{fs_dt_nh}} {{fs_act}}" http://localhost:5001/neighbor {{fs_nb_addr}} withdraw flow route source {{fs_sr_pref}} destination {{fs_dt_nh}} {{fs_act}} &
+sudo curl --form "command=neighbor {{fs_nb_addr}} withdraw flow route source {{fs_sr_pref}} destination {{fs_dt_nh}} {{fs_act}}" http://localhost:5001/ &
     {% endif %}
 {% endif %}
