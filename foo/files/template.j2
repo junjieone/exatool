@@ -10,6 +10,10 @@ neighbor {{params.is_nb_addr}} {
          ipv4 nlri-mpls;
          ipv4 flow;
     }
+    capability {
+         graceful-restart;
+         route-refresh enable;
+    }
 }
 {% endif %}
 {% if params.dr_nb_addr %}
@@ -23,6 +27,10 @@ neighbor {{params.dr_nb_addr}} {
          ipv4 unicast;
          ipv4 nlri-mpls;
          ipv4 flow;
+    }
+    capability {
+         graceful-restart;
+         route-refresh enable;
     }
 }
 {% endif %}
@@ -38,5 +46,13 @@ neighbor {{params.es_nb_addr}} {
          ipv4 nlri-mpls;
          ipv4 flow;
     }
+    capability {
+         graceful-restart;
+         route-refresh enable;
+    }
 }
 {% endif %}
+process abc{
+    run python /home/lab/exabgp/http-api.py;
+    encoder json;
+}
